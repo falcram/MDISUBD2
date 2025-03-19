@@ -43,7 +43,7 @@ END;
 
 CREATE OR REPLACE PROCEDURE insert_mytable(p_id NUMBER, p_val NUMBER) IS
 BEGIN
-    INSERT INTO MyTable (id, val) VALUES (p_id + 1, p_val);
+    INSERT INTO MyTable (id, val) VALUES (p_id, p_val);
     COMMIT;
 EXCEPTION
     WHEN DUP_VAL_ON_INDEX THEN
@@ -87,6 +87,7 @@ EXCEPTION
 END;
 /
 
+-- 6
 CREATE OR REPLACE FUNCTION calculate_total_compensation(
     p_monthly_salary NUMBER,
     p_bonus_percentage INTEGER
@@ -99,6 +100,11 @@ BEGIN
 
     IF p_bonus_percentage < 0 THEN
         RAISE VALUE_ERROR;  
+    END IF;
+
+    IF p_monthly_salary IS NULL THEN
+        total_compensation := 0;
+        RETURN total_compensation;
     END IF;
 
     total_compensation := (1 + p_bonus_percentage / 100) * 12 * p_monthly_salary;
